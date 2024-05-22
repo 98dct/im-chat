@@ -1,0 +1,1 @@
+instance message system base go
