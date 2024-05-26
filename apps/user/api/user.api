@@ -1,1 +1,14 @@
-package api
+syntax = "v1"
+
+info(
+    title:"用户服务实例对象"
+    author:"dct"
+)
+
+import(
+    "domain.api"
+)
+
+
+
+
