@@ -11,5 +11,5 @@ Cache:
     Type: node
     Pass: easy-chat
 Jwt:
-  AccessSecret: dct.com
+  AccessSecret: 98dct.com
   AccessExpire: 8640000
