@@ -1,0 +1,12 @@
+Name: social.rpc
+ListenOn: 127.0.0.1:10001
+Etcd:
+  Hosts:
+    - 192.168.8.100:3379
+  Key: social.rpc
+Mysql:
+  Datasource: root:root@tcp(192.168.8.100:3306)/easy-chat?charset=utf8mb4&parseTime=true
+Cache:
+  - Host: 192.168.8.100:16379
+    Type: node
+    Pass: easy-chat
