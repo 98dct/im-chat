@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"im-chat/deploy/interceptor/rpcserver"
+	"im-chat/pkg/interceptor/rpcserver"
 
 	"im-chat/apps/social/rpc/internal/config"
 	"im-chat/apps/social/rpc/internal/server"
