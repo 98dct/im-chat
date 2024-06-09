@@ -181,6 +181,10 @@ func (s *Server) Send(msg interface{}, conns ...*Conn) error {
 
 // 根据连接对象执行任务处理
 func (s *Server) handlerConn(conn *Conn) {
+
+	uids := s.GetUsers(conn)
+	conn.Uid = uids[0]
+
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
