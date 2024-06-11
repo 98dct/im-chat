@@ -38,11 +38,11 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 			srv.SendByIds(websocket.NewMessage(conn.Uid, ws.Chat{
 				ConversationId: data.ConversationId,
 				ChatType:       data.ChatType,
-				SendId:         data.SendId,
+				SendId:         conn.Uid,
 				RecvId:         data.RecvId,
 				Msg:            data.Msg,
 				SendTime:       time.Now().UnixMilli(),
-			}), data.SendId)
+			}), data.RecvId)
 
 		}
 

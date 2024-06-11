@@ -8,7 +8,6 @@ import (
 	"im-chat/apps/im/ws/internal/handler"
 	"im-chat/apps/im/ws/internal/svc"
 	"im-chat/apps/im/ws/websocket"
-	"time"
 )
 
 var configFile = flag.String("f", "etc/dev/im.yaml", "the config file")
@@ -27,7 +26,7 @@ func main() {
 
 	srv := websocket.NewServer(c.ListenOn,
 		websocket.WithServerAuthentication(handler.NewJwtAuth(ctx)),
-		websocket.WithServerMaxConnectionIdle(10*time.Second),
+		//websocket.WithServerMaxConnectionIdle(10*time.Second),
 	)
 	defer srv.Stop()
 
