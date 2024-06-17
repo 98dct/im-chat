@@ -2,6 +2,7 @@ package handler
 
 import (
 	"im-chat/apps/im/ws/internal/handler/conversation"
+	"im-chat/apps/im/ws/internal/handler/push"
 	"im-chat/apps/im/ws/internal/handler/user"
 	"im-chat/apps/im/ws/internal/svc"
 	"im-chat/apps/im/ws/websocket"
@@ -16,6 +17,10 @@ func RegisterHandlers(srv *websocket.Server, svc *svc.ServiceContext) {
 		{
 			Method:  "conversation.chat",
 			Handler: conversation.Chat(svc),
+		},
+		{
+			Method:  "push.push",
+			Handler: push.Push(svc),
 		},
 	})
 }
