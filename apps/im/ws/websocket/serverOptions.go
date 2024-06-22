@@ -6,6 +6,9 @@ type serverOption struct {
 	Authentication
 	patten            string
 	maxConnectionIdle time.Duration
+
+	ack        AckType
+	ackTimeout time.Duration
 }
 
 type ServerOption func(opt *serverOption)
@@ -14,6 +17,7 @@ func newServerOptions(opts ...ServerOption) serverOption {
 	o := serverOption{
 		Authentication:    new(authentication),
 		maxConnectionIdle: defaultMaxConnectionIdle,
+		ackTimeout:        defaultAckTimeout,
 		patten:            "/ws",
 	}
 
@@ -41,5 +45,11 @@ func WithServerMaxConnectionIdle(maxConnectionIdle time.Duration) ServerOption {
 		if maxConnectionIdle > 0 {
 			opt.maxConnectionIdle = maxConnectionIdle
 		}
+	}
+}
+
+func WithServerAck(ack AckType) ServerOption {
+	return func(opt *serverOption) {
+		opt.ack = ack
 	}
 }

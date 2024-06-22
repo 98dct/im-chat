@@ -18,6 +18,12 @@ type Conn struct {
 	idle              time.Time
 	maxConnectionIdle time.Duration
 
+	messageMu      sync.Mutex
+	readMessage    []*Message
+	readMessageSeq map[string]*Message
+
+	message chan *Message
+
 	done chan struct{}
 }
 
@@ -33,6 +39,9 @@ func NewConn(s *Server, w http.ResponseWriter, r *http.Request) *Conn {
 		s:                 s,
 		idle:              time.Now(),
 		maxConnectionIdle: s.opt.maxConnectionIdle,
+		readMessage:       make([]*Message, 0, 2),
+		readMessageSeq:    make(map[string]*Message, 2),
+		message:           make(chan *Message, 1),
 		done:              make(chan struct{}),
 	}
 
@@ -40,6 +49,35 @@ func NewConn(s *Server, w http.ResponseWriter, r *http.Request) *Conn {
 
 	return conn
 
+}
+
+func (c *Conn) appendMsgMq(msg *Message) {
+	c.messageMu.Lock()
+	defer c.messageMu.Unlock()
+
+	if m, ok := c.readMessageSeq[msg.Id]; ok {
+		// 已经有消息的记录了，该消息已经有ack的确认
+		if len(c.readMessage) == 0 {
+			// 队列中没有消息
+			return
+		}
+
+		if m.AckSeq >= msg.AckSeq {
+			// 没有ack确认，或者重复发送
+			return
+		}
+
+		c.readMessageSeq[msg.Id] = msg
+		return
+	}
+
+	// 还没有进行ack的确认，避免客户端发送多余的ack消息
+	if msg.FrameType == FrameAck {
+		return
+	}
+
+	c.readMessage = append(c.readMessage, msg)
+	c.readMessageSeq[msg.Id] = msg
 }
 
 func (c *Conn) ReadMessage() (messageType int, p []byte, err error) {
