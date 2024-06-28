@@ -7,6 +7,7 @@ import (
 	"im-chat/apps/im/ws/ws"
 	"im-chat/apps/task/mq/mq"
 	"im-chat/pkg/constants"
+	"im-chat/pkg/wuid"
 	"time"
 )
 
@@ -24,6 +25,10 @@ func Chat(svc *svc.ServiceContext) websocket.HandlerFunc {
 		if err := mapstructure.Decode(msg.Data, &data); err != nil {
 			srv.Send(websocket.NewErrMessage(err), conn)
 			return
+		}
+
+		if data.ConversationId == "" {
+			data.ConversationId = wuid.CombineId(data.SendId, data.RecvId)
 		}
 
 		switch data.ChatType {

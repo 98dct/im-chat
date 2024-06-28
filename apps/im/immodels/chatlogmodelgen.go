@@ -3,6 +3,7 @@ package immodels
 
 import (
 	"context"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/mon"
@@ -16,7 +17,11 @@ type chatLogModel interface {
 	FindOne(ctx context.Context, id string) (*ChatLog, error)
 	Update(ctx context.Context, data *ChatLog) (*mongo.UpdateResult, error)
 	Delete(ctx context.Context, id string) (int64, error)
+	ListBySendTime(ctx context.Context, conversationId string,
+		startSendTime, endSendTime, count int64) ([]*ChatLog, error)
 }
+
+var DefaultChatLogCount int64 = 100
 
 type defaultChatLogModel struct {
 	conn *mon.Model
@@ -71,4 +76,46 @@ func (m *defaultChatLogModel) Delete(ctx context.Context, id string) (int64, err
 
 	res, err := m.conn.DeleteOne(ctx, bson.M{"_id": oid})
 	return res, err
+}
+
+// 查找聊天记录
+func (m *defaultChatLogModel) ListBySendTime(ctx context.Context, conversationId string,
+	startSendTime, endSendTime, count int64) ([]*ChatLog, error) {
+	var data []*ChatLog
+	opt := options.FindOptions{
+		Limit: &DefaultChatLogCount,
+		Sort: bson.M{
+			"sendTime": -1,
+		},
+	}
+
+	filter := bson.M{
+		"conversationId": conversationId,
+	}
+
+	if endSendTime > 0 {
+		filter["sendTime"] = bson.M{
+			"$gt":  endSendTime,
+			"&lte": startSendTime,
+		}
+	} else {
+		filter["sendTime"] = bson.M{
+			"$lt": startSendTime,
+		}
+	}
+
+	if count > 0 {
+		opt.Limit = &count
+	}
+
+	err := m.conn.Find(ctx, &data, filter, &opt)
+	switch err {
+	case nil:
+		return data, nil
+	case mon.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+
 }
