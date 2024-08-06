@@ -1,0 +1,6 @@
+bitmap需求分析：
+1.bitmap定义大小
+2.根据uid设置bitmap属性值
+3.验证某一用户是否在bitmap中有设置
+4.将bitmap的值导入导出
+5.

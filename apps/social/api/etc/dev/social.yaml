@@ -2,6 +2,11 @@ Name: social
 Host: 0.0.0.0
 Port: 8881
 
+Redisx:
+  Host: 192.168.8.100:16379
+  Type: node
+  Pass: easy-chat
+
 SocialRpc:
   Etcd:
     Hosts:
@@ -13,6 +18,12 @@ UserRpc:
     Hosts:
       - 192.168.8.100:3379
     Key: user.rpc
+
+ImRpc:
+  Etcd:
+    Hosts:
+      - 192.168.8.100:3379
+    Key: im.rpc
 
 JwtAuth:
   AccessSecret: 98dct.com

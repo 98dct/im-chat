@@ -46,7 +46,7 @@ func (l *FriendPutInHandleLogic) FriendPutInHandle(in *social.FriendPutInHandleR
 	switch constants.HandlerResult(friendRequests.HandleResult.Int64) {
 	case constants.PassHandlerResult:
 		return nil, errors.WithStack(ErrFriendReqBeforePass)
-	case constants.RejectHandlerResult:
+	case constants.RefuseHandlerResult:
 		return nil, errors.WithStack(ErrFriendReqBeforeRefuse)
 	}
 
